@@ -1,6 +1,7 @@
 # OSS_CHAT
-OSS_Chat is a chat tool designed for training domain knowledge. Currently, it has been trained on the domain knowledge of GitHub projects with the goal of becoming the most comprehensive knowledge platform in the open-source domain.
+OSS_Chat is a chat tool designed for training domain knowledge. 
 
+OSS_Chat aims to become the most comprehensive Q&A tool for knowledge in the open-source field.
 ## Function
 Can talk with the chat, As follows:
 ![img.png](asset/img.png)
