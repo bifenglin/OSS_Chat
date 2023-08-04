@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/3.0.8/marked.min.js"></script> <!-- Include marked library -->
+    <style>
+        #chat-box {
+            height: 500px;
+            overflow-y: scroll;
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+            resize: both; /* Allows resizing */
+            overflow: auto; /* Keeps the content scrollable */
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .left-message {
+            background-color: #e6e6e6;
+            text-align: left;
+        }
+
+        .right-message {
+            background-color: #a6d1f2;
+            text-align: right;
+        }
+
+        #logo {
+            width: 50px;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 mt-4">
+            <div class="text-center">
+                <img src="logo.png" alt="Logo" id="logo">
+                <h1>Welcome to ChatApp</h1>
+            </div>
+            <div id="chat-box">
+                <ul id="chat-history" class="list-unstyled"></ul>
+            </div>
+            <div id="loading">
+                <img src="loading.gif" alt="Loading..."> Waiting for reply...
+            </div>
+            <input type="text" id="message-input" class="form-control" placeholder="Enter your message...">
+            <button onclick="sendMessage()" class="btn btn-primary mt-2">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('receive_message', function(msg) {
+        $('#chat-history').append('<li class="message right-message">' + marked(msg) + '</li>'); // Use marked() here
+        $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+        $('#loading').hide();
+    });
+
+    function sendMessage() {
+        var message = $('#message-input').val();
+        $('#chat-history').append('<li class="message left-message">' + marked(message) + '</li>'); // Use marked() here
+        $('#message-input').val('');
+        $('#loading').show();
+        socket.emit('send_message', message); // Sends the message to the server
+    }
+
+    // Event listener for the enter key on the message input
+    $('#message-input').keypress(function (e) {
+        if (e.which == 13 && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+</script>
+</body>
+
+</html>
